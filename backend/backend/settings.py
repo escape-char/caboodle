@@ -1,10 +1,15 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseSettings
 from decouple import config
 
 
 class Settings(BaseSettings):
     environment: str = config("CABOODLE_ENVIRONMENT")
+
+    cors_origins: List[str] = config(
+        "CABOODLE_CORS_ORIGINS",
+        default=""
+    ).split(",")
 
     # auth jwt settings
     auth_secret_key: str = config("CABOODLE_AUTH_SECRET_KEY")

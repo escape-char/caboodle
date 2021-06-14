@@ -2,16 +2,15 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {grey} from '@material-ui/core/colors';
 import Divider from '@material-ui/core/Divider';
-import ListItemSubheader from '@material-ui/core/ListSubheader';
 import LanguageIcon from '@material-ui/icons/Language';
 import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import SortIcon from '@material-ui/icons/Sort';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import {Hidden} from '../common/components/layouts';
-import {Drawer} from '../common/components/navigation';
-import {List, ListItem, ListItemText, ListItemIcon} from '../common/components/data';
-import {APP_BAR_HEIGHT} from '../common/theme';
+import {Hidden} from '../../common/components/layouts';
+import {Drawer} from '../../common/components/navigation';
+import {List} from '../../common/components/data';
+import {APP_BAR_HEIGHT} from '../../common/theme';
 import SidebarItem from './SidebarItem';
 import SidebarList from './SidebarList';
 import SidebarSubheader from './SidebarSubheader';
@@ -41,7 +40,6 @@ const useStyles = makeStyles((theme)=>{
 
 
 export default function Sidebar(){
-  const container = window !== undefined ? () => window.document.body : undefined;
   const classes = useStyles();
 
   return(

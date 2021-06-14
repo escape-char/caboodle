@@ -2,9 +2,9 @@ import React from 'react';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/More';
 import {makeStyles} from '@material-ui/core/styles';
-import {IconButton} from '../common/components/inputs'
+import {IconButton} from '../../common/components/inputs'
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import {Badge} from '../common/components/data';
+import {Badge} from '../../common/components/data';
 import {ACCOUNT_MENU_ID, MOBILE_ACCOUNT_MENU_ID} from './constants';
 
 

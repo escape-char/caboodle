@@ -1,6 +1,6 @@
 import React from 'react';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import {ListItem} from '../common/components/data';
+import {ListItem} from '../../common/components/data';
 
 export type SidebarSubheaderProps = {text: string};
 

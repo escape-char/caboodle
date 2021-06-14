@@ -7,14 +7,15 @@ export interface RouteProps extends RouterRouteProps {
 }
 
 export function RouteWithSubRoutes(route: any) {
+  const renderRoute = (props: object) =>{
+    return (<route.component {...props} routes={route.routes} />)
+  }
+  const render = route.render ||  renderRoute
+  
   return (
     <Route
       path={route.path}
-      render={(props) => {
-        return (
-          <route.component {...props} routes={route.routes} />
-        );
-      }}
+      render={render}
     />
   );
 }
