@@ -23,7 +23,6 @@ const defaultProps = {
  * @returns  input as react element
  */
 function FormInput(props: FormInputProps): React.ReactElement {
-  console.log("forminput: ", props);
   const {control, errors} = useFormContext();
   const { name, label, defaultValue, inputProps, labelProps, rules} = props;
 
@@ -52,6 +51,7 @@ function FormInput(props: FormInputProps): React.ReactElement {
             name={name}
             label={label}
             error={showError}
+            type={props.type}
             required={props.required}
             disabled={props.disabled}
             placeholder={props.placeholder}

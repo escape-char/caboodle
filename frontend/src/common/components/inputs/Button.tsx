@@ -78,9 +78,6 @@ const useStyles = makeStyles((theme) => ({
  */
 function  Button(props: ButtonProps): React.ReactElement{
   const {loading, ...bProps} = props;
-  console.log("props: ", props);
-  console.log("bProps: ", bProps);
-
   const classes = useStyles();
 
   return (

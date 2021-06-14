@@ -21,3 +21,5 @@ export enum InputType {
   WEEK = "week"
 }
 
+export const API_URL: string | undefined = process.env.REACT_APP_CABOODLE_API_URL 
+

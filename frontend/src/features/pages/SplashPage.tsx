@@ -7,7 +7,8 @@ import React from "react";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Page, {PageHeader, PageContent, PageSubheader} from './Page';
-import {isString} from '../../utils';
+import {isString} from '../../common/utils';
+import GlobalAlert from '../globalalert/GlobalAlert'
 
 /**
  * Splash page properties
@@ -64,6 +65,7 @@ export default function SplashPage(props: SplashPageProps): React.ReactElement {
     <Grid className={classes.root} container>
       <Grid item sm={12} md={5}>
         <Page className={classes.page}>
+          <GlobalAlert/>
           <PageHeader> {props.header} </PageHeader>
           <PageSubheader> {props.subheader} </PageSubheader>
           <PageContent disableGutters>

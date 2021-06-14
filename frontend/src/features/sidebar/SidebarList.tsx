@@ -1,6 +1,6 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import List, {ListProps} from '../common/components/data/List';
+import List, {ListProps} from '../../common/components/data/List';
 import {SIDEBAR_WIDTH} from './constants';
 
 const defaultProps = {

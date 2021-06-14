@@ -1,6 +1,6 @@
 import React from "react";
-import Container, {ContainerProps} from "../layouts/Container";
-import {default as Header, HeaderProps} from '../typography/Header';
+import Container, {ContainerProps} from "../../common/components/layouts/Container";
+import {default as Header, HeaderProps} from '../../common/components/typography/Header';
 
 export type PageProps = ContainerProps;
 

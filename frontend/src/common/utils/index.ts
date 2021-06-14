@@ -1,4 +1,5 @@
-import {PUBLIC_URL} from '../constants';
+import qs from 'qs'
+import {PUBLIC_URL} from '../../constants';
 
 export function getFile(file:string): string{
   const f = file.startsWith("/") ? file.substring(1) : file;
@@ -32,4 +33,25 @@ export const isFunction = (f:any):boolean=>{
 
 export const isString = (s:any):boolean=>{
   return typeof s === 'string';
+}
+
+export function setLocalStorage(key: string, data:any){
+  localStorage.setItem(key, JSON.stringify(data))
+}
+
+export function getLocalStorage(key: string): any {
+  const item: string | null = localStorage.getItem(key)
+  return item && JSON.parse(item)
+}
+
+export function removeLocalStorage(key:string): void{
+  localStorage.removeItem(key)
+}
+
+export function getURLParams(): Record<string, any>{
+  const search: string = window.location.search.replace(/^\?/g, "")
+  return qs.parse(search)
+}
+export function getURLPathWithParams(){
+  return encodeURIComponent(window.location.pathname) + encodeURIComponent(window.location.search)
 }

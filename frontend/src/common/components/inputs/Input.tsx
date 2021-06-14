@@ -7,7 +7,6 @@ import {default as MInput, InputProps as MInputProps} from "@material-ui/core/In
 import {default as FormControl, FormControlProps} from '@material-ui/core/FormControl';
 import {default as FormHelperText, FormHelperTextProps} from '@material-ui/core/FormHelperText';
 import {makeStyles} from '@material-ui/core/styles';
-//import {white} from '@material-ui/core/colors';
 import {default as Label, LabelProps} from './Label';
 import {InputType} from './constants';
 import {lighten} from '../../utils/theme';
@@ -87,8 +86,6 @@ const defaultProps = {
  */
 function Input(props: InputProps): React.ReactElement{
   const [value, setValue] = useState("");
-  console.log("input(): ", props);
-
   const {
     formControlProps, 
     inputProps, 
@@ -104,6 +101,7 @@ function Input(props: InputProps): React.ReactElement{
     placeholder: placeholder,
     required: props.required,
     disabled: props.disabled,
+    type: props.type,
     error: props.error,
     onChange: props.onChange,
     onBlur: props.onBlur

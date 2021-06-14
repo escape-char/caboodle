@@ -1,12 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { Theme, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {BrowserRouter as Router } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
+import {AuthProvider} from './features/auth/context'
+import GlobalAlertProvider from './features/globalalert/context'
+import CssBaseline from '@material-ui/core/CssBaseline';
+import defaultTheme from './common/theme';
+import App from './App';
+import './index.css';
+
+const theme: Theme = createMuiTheme(defaultTheme);
+
+export function AppProviders({children}: {children: React.ReactNode}) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
+      <Router>
+          <GlobalAlertProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </GlobalAlertProvider>
+      </Router>
+    </ThemeProvider>
+  )
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <AppProviders>
+        <App />
+    </AppProviders>
   </React.StrictMode>,
   document.getElementById('root')
 );

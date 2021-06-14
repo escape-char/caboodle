@@ -1,5 +1,5 @@
 import React from 'react';
-import {ListItem, ListItemIcon, ListItemText} from '../common/components/data';
+import {ListItem, ListItemIcon, ListItemText} from '../../common/components/data';
 import {grey} from '@material-ui/core/colors';
 import {makeStyles} from '@material-ui/core/styles';
 
