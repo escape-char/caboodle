@@ -1,3 +1,4 @@
+from enum import Enum
 from datetime import datetime
 from typing import List, Optional, Any
 from pydantic import BaseModel
@@ -123,3 +124,25 @@ class MyBookmarkMeta(BaseModel):
     favorites: int = 0
     unread: int = 0
     unsorted: int = 0
+
+
+class CommonParams(BaseModel):
+    q: Optional[str] = None
+    skip: int = 0
+    limit: int = 100
+
+
+class MyBookmarkSortByEnum(Enum):
+    create_date = "created_at"
+    modified_date = "modified_at"
+    title = "title"
+
+
+class MyBookmarksParams(CommonParams):
+    unsorted: Optional[bool] = None
+    favorite: Optional[bool] = None
+    unread: Optional[bool] = None
+    sort_by: MyBookmarkSortByEnum = (
+        MyBookmarkSortByEnum.modified_date
+    )
+
