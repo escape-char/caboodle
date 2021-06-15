@@ -1,16 +1,11 @@
-from typing import Final, List
+
+from typing import Final
 from sqlalchemy.orm import Session
 from fastapi import Depends, APIRouter, status, HTTPException
 from backend.common import dependencies
-from backend.common.dao import mybookmarks
+from backend.common.dao.bookmarks import get_bookmark_metadata
 from backend.common.security import constants
-from backend.common.schema import (
-    AccessTokenData,
-    DatabaseResult,
-    MyBookmarkMeta,
-    MyBookmarksParams,
-    Bookmark
-)
+from backend.common.schema import AccessTokenData, MyBookmarkMeta
 
 RESOURCE: Final[str] = constants.Resource.MY_BOOKMARKS
 
@@ -46,11 +41,11 @@ check_delete_access = dependencies.CheckAccess(
 
 
 @router.get(
-    '/metadata',
+    '/metadata', 
     description=(
         "Gets user's bookmarks metadata including total favorites,"
         " bookmarks, unread, and unsorted."
-        "Requires at least 'my.bookmarks.view' role"
+        "Requires at least 'my.bookmarks.administrator' role"
     ),
     dependencies=[Depends(check_view_access)],
     response_model=MyBookmarkMeta
@@ -59,10 +54,7 @@ def get_metadata(
     token_data: AccessTokenData = Depends(dependencies.get_token_data),
     db: Session = Depends(dependencies.get_db)
 ):
-    result: DatabaseResult = mybookmarks.get_bookmark_metadata(
-        db,
-        token_data.user_id
-    )
+    result = get_bookmark_metadata(db, token_data.user_id)
 
     # handle database error
     if not result.success:
@@ -72,35 +64,3 @@ def get_metadata(
         )
 
     return result.data
-
-
-@router.get(
-    '',
-    description=(
-        "Gets user's bookmarks. "
-        "Requires at least 'my.bookmarks.view' role"
-    ),
-    dependencies=[Depends(check_view_access)],
-    response_model=List[Bookmark]
-)
-def get_my_bookmarks(
-    params: MyBookmarksParams = Depends(),
-    token_data: AccessTokenData = Depends(dependencies.get_token_data),
-    db: Session = Depends(dependencies.get_db)
-):
-    result: DatabaseResult = mybookmarks.get_my_bookmarks(
-        db,
-        token_data.user_id,
-        params
-    )
-
-    # handle database error
-    if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=result.message
-        )
-
-    return result
-
-
