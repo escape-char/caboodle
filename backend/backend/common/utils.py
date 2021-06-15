@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from functools import reduce
 from urllib.parse import quote
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 from backend.settings import settings
 from backend.common.constants import (ENV_DEVELOPMENT, ENV_PRODUCTION)
 
@@ -12,7 +12,7 @@ def get_conn_str(
     port: int,
     username: str = None,
     password: str = None,
-    db: Union[str, int] = None
+    db: Optional[Union[str, int]] = None
 ) -> str:
     conn_str = ""
 
@@ -27,7 +27,7 @@ def get_conn_str(
     else:
         conn_str = f"{prot}://{host}:{port}"
 
-    if db:
+    if db is not None:
         conn_str = f"{conn_str}/{db}"
 
     return conn_str

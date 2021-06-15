@@ -1,15 +1,17 @@
 from typing import Final, Optional
+from fastapi import Request
 from jose import JWTError
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from backend.common.dependencies import get_db
+from backend.common.dependencies import get_db, get_cache
 from backend.common.dao import users
 from backend.common.security.utils import encode_access_token
 from backend.common.schema import User, AccessTokenData, DatabaseResult
 from backend.common.models import User as DBUser
 from backend.settings import settings
+from backend.common.session import set_session, get_ip
 
 router = APIRouter()
 
@@ -20,15 +22,18 @@ MSG_LOCKED: Final[str] = "Your account is locked. Please try again in an hour"
 
 
 class AuthResponse(BaseModel):
-    token: str
+    access_token: str
+    token_type: str
     expires_at: str
     user: User
 
 
 @router.post('/auth', tags=['auth'], response_model=AuthResponse)
 async def auth(
+    request: Request,
     form: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    cache: Session = Depends(get_cache)
 ):
     result: DatabaseResult = users.verify_auth(
         db,
@@ -64,7 +69,7 @@ async def auth(
 
                 # handle database error
                 if not result.success:
-                    return HTTPException(
+                    raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail=result.message
                     )
@@ -79,14 +84,15 @@ async def auth(
 
     # handle database error
     if not result.success:
-        return HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=result.message
         )
 
     # generate access token
     token_data = AccessTokenData(
-        sub=user.username,
+        sub=user.id,
+        user_id=user.id,
         name=user.name,
         email=user.email,
         given_username=user.username,
@@ -101,8 +107,16 @@ async def auth(
             detail=MSG_ENCODE_TOKEN
         )
 
+    await set_session(
+        cache,
+        User(**user.asdict()),
+        token_result["token"],
+        get_ip(request)
+    )
+
     return AuthResponse(
-        token=token_result["token"],
+        access_token=token_result["token"],
+        token_type="bearer",
         expires_at=token_result["expires_at"],
         user=user
     )

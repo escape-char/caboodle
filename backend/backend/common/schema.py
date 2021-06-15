@@ -114,4 +114,12 @@ class AccessTokenData(BaseModel):
     name: str
     email: str
     given_username: str
+    user_id: int
     iss: str
+
+
+class MyBookmarkMeta(BaseModel):
+    bookmarks: int = 0
+    favorites: int = 0
+    unread: int = 0
+    unsorted: int = 0
