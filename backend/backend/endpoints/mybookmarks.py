@@ -1,4 +1,4 @@
-from typing import Final
+from typing import Final, List
 from sqlalchemy.orm import Session
 from fastapi import Depends, APIRouter, status, HTTPException
 from backend.common import dependencies
@@ -8,7 +8,8 @@ from backend.common.schema import (
     AccessTokenData,
     DatabaseResult,
     MyBookmarkMeta,
-    MyBookmarksParams
+    MyBookmarksParams,
+    Bookmark
 )
 
 RESOURCE: Final[str] = constants.Resource.MY_BOOKMARKS
@@ -79,7 +80,8 @@ def get_metadata(
         "Gets user's bookmarks. "
         "Requires at least 'my.bookmarks.view' role"
     ),
-    dependencies=[Depends(check_view_access)]
+    dependencies=[Depends(check_view_access)],
+    response_model=List[Bookmark]
 )
 def get_my_bookmarks(
     params: MyBookmarksParams = Depends(),
