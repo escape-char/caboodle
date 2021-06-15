@@ -15,24 +15,20 @@ def get_users(
     s: Final[str] = f"%{search}%".lower()
 
     try:
+        query = db.query(models.User)
         if search:
-            users: List[models.User] = db.query(models.User).filter(
+            query.filter(
                 or_(
                     models.User.username.like(s),
                     models.User.email.like(s),
                     models.User.name.like(s)
                 )
-            ).offset(offset).limit(limit).all()
-            return schema.DatabaseResult(
-                success=True,
-                data=users
             )
-        else:
-            users = db.query(models.User).offset(offset).limit(limit).all()
-            return schema.DatabaseResult(
-                success=True,
-                data=users
-            )
+        users: List[models.User] = query.offset(offset).limit(limit).all()
+        return schema.DatabaseResult(
+            success=True,
+            data=users
+        )
     except exc.SQLAlchemyError as e:
         return schema.DatabaseResult(
             success=False,
