@@ -6,6 +6,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     SmallInteger,
+    Text,
     String
 )
 from sqlalchemy.orm import relationship
@@ -216,3 +217,71 @@ class Role(Base):
             created_at=self.created_at,
             modified_at=self.modified_at
         )
+
+
+class URLs(Base):
+    __tablename__ = "urls"
+    id = Column(Integer, primary_key=True, index=True)
+    domain = Column(String(255), nullable=False)
+    last_checked = Column(DateTime, nullable=True, default=None)
+    http_status = Column(SmallInteger, nullable=True, default=None)
+    http_last_modified = Column(DateTime, nullable=True, default=None)
+    content_hash = Column(String(255), nullable=True, default=None)
+    http_etag = Column(String(255), nullable=True, default=None)
+    count = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=utcnow)
+    modified_at = Column(DateTime, default=utcnow)
+
+
+class Bookmark(Base):
+    __tablename__ = "bookmarks"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=False)
+    image_path = Column(String(255), nullable=True)
+    snapshot_id = Column(Integer, ForeignKey('snapshots.id'), nullable=True)
+    to_read = Column(Boolean, nullable=False, default=False)
+    favorite = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, default=utcnow)
+    modified_at = Column(DateTime, default=utcnow)
+
+    def __str__(self) -> str:
+        return (
+            "<Bookmark title='{title}' description='{descr}'>"
+        ).format(
+            title=self.title,
+            descr=self.description
+        )
+
+    def asdict(self) -> dict:
+        return dict(
+            user_id=self.user_id,
+            title=self.title,
+            description=self.description,
+            image_path=self.image_path,
+            snapshot_id=self.snapshot_id,
+            to_read=self.to_read,
+            favorite=self.favorite,
+            created_at=self.created_at,
+            modified_at=self.modified_at
+        )
+
+
+class Tag(Base):
+    __tablename__ = "tags"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    name = Column(String(60), nullable=False)
+    count = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=utcnow)
+    modified_at = Column(DateTime, default=utcnow)
+
+
+class BookmarkTag(Base):
+    __tablename__ = "bookmark_tag"
+    id = Column(Integer, primary_key=True, index=True)
+    bookmark_id = Column(Integer, ForeignKey('bookmarks.id'))
+    tag_id = Column(Integer, ForeignKey('bookmarks.id'))
+    created_at = Column(DateTime, default=utcnow)
+    modified_at = Column(DateTime, default=utcnow)

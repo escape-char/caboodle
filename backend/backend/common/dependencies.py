@@ -1,4 +1,4 @@
-from typing import Final, List
+from typing import Final, List, Optional
 from jose.jwt import JWTError
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -42,7 +42,9 @@ async def get_cache() -> Cache:
     return await get_cache_db()
 
 
-async def get_token_data(token: str = Depends(oauth2_scheme)):
+async def get_token_data(
+    token: str = Depends(oauth2_scheme)
+) -> AccessTokenData:
     try:
         payload: Final[AccessTokenData] = await decode_access_token(token)
 
@@ -57,25 +59,35 @@ async def get_token_data(token: str = Depends(oauth2_scheme)):
 async def get_user_session(
     request: Request,
     token: str = Depends(oauth2_scheme),
-    token_data: AccessTokenData = Depends(get_token_data),
     cache=Depends(get_cache),
+    token_data=Depends(get_token_data),
 ) -> User:
-    return await get_session(cache, token, get_ip(request))
+    session: Optional[User] = await get_session(cache, token, get_ip(request))
+    if not session:
+        raise auth_exc
+    return session
 
 
 class CheckAccess:
     def __init__(
         self,
-        session: User = Depends(get_user_session),
         resource: str = "",
         roles: List[str] = []
     ):
-        self.session = session
         self.resource = resource
         self.roles = roles
 
-    def __call__(self):
-        if not has_access(self.session, self.resource, self.roles):
+    def __call__(self, session=Depends(get_user_session)):
+        if not has_access(session, self.resource, self.roles):
             raise access_exc
         else:
             return True
+
+
+def check_access_factory(
+    session: User = Depends(get_user_session),
+    resource: str = "",
+    roles: List[str] = []
+) -> CheckAccess:
+    raise NameError(str(session))
+    return CheckAccess(session, resource, roles)

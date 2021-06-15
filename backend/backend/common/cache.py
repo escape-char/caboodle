@@ -18,6 +18,7 @@ async def init(
         port,
         db=db
     )
+
     return await aioredis.create_pool(
         conn_str, password=password, ssl=ssl
     )
@@ -28,8 +29,9 @@ class Cache:
         self.cache: aioredis.Redis = cache
 
     async def get(self, key: str, use_json: bool = True) -> Any:
-        data: Any = await self.cache.get(key)
-        return json.loads(data) if use_json and data is not None else data
+        with await self.cache as conn:
+            data: Any = await conn.execute("GET", key)
+            return json.loads(data) if use_json and data is not None else data
 
     async def set(
         self,
@@ -38,14 +40,16 @@ class Cache:
         expire: int = 0,
         use_json: bool = True
     ):
-        data = json.dumps(value) if use_json else value
-        await self.cache.set(key, data, expire)
+        with await self.cache as conn:
+            data = json.dumps(value) if use_json else value
+            await conn.execute("SET", key, data, "ex", expire)
 
     async def delete(
         self,
         key: str
     ):
-        await self.cache.delete(key)
+        with await self.cache as conn:
+            await conn.execute("DELETE", key)
 
 
 _cache: Optional[Cache] = None
