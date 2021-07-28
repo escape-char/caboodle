@@ -1,6 +1,6 @@
-from typing import List, Final
+from typing import List, Final, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import exc, func, case, or_
+from sqlalchemy import exc, func, case, or_, and_
 from backend.common import schema
 from backend.common import models
 
@@ -24,7 +24,7 @@ def get_bookmark_metadata(
         ).outerjoin(
             models.BookmarkTag,
             models.Bookmark.id == models.BookmarkTag.bookmark_id,
-        ).filter(models.BookmarkTag.bookmark_id.isn(None)).all()
+        ).filter(models.BookmarkTag.bookmark_id.isnot(None)).all()
 
         meta: schema.MyBookmarkMeta = schema.MyBookmarkMeta(
             bookmarks=bookmark_meta[0][0],
@@ -90,6 +90,28 @@ def get_my_bookmarks(
 
         return schema.DatabaseResult(success=True, data=bookmarks)
 
+    except exc.SQLAlchemyError as e:
+        return schema.DatabaseResult(
+            success=False,
+            exception=e,
+            message=str(e)
+        )
+
+
+def get_my_bookmark(
+    db: Session,
+    bookmark_id: int,
+    user_id: int,
+) -> schema.DatabaseResult:
+
+    try:
+        bookmark: Optional[models.Bookmark] = db.query(models.Bookmark).filter(
+            and_(
+                models.Bookmark.id == bookmark_id,
+                models.Bookmark.user_id == user_id
+            )
+        ).first()
+        return schema.DatabaseResult(success=True, data=bookmark)
     except exc.SQLAlchemyError as e:
         return schema.DatabaseResult(
             success=False,

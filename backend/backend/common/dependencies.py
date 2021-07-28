@@ -17,12 +17,10 @@ auth_exc: HTTPException = HTTPException(
 
 access_exc: HTTPException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="You do not have access to this resource"
+    detail="You do not have access to this resource",
 )
 
-oauth2_scheme: Final[OAuth2PasswordBearer] = OAuth2PasswordBearer(
-    tokenUrl="auth"
-)
+oauth2_scheme: Final[OAuth2PasswordBearer] = OAuth2PasswordBearer(tokenUrl="auth")
 
 
 async def return_value(value):
@@ -42,9 +40,7 @@ async def get_cache() -> Cache:
     return await get_cache_db()
 
 
-async def get_token_data(
-    token: str = Depends(oauth2_scheme)
-) -> AccessTokenData:
+async def get_token_data(token: str = Depends(oauth2_scheme)) -> AccessTokenData:
     try:
         payload: Final[AccessTokenData] = await decode_access_token(token)
 
@@ -69,11 +65,7 @@ async def get_user_session(
 
 
 class CheckAccess:
-    def __init__(
-        self,
-        resource: str = "",
-        roles: List[str] = []
-    ):
+    def __init__(self, resource: str = "", roles: List[str] = []):
         self.resource = resource
         self.roles = roles
 
@@ -85,9 +77,7 @@ class CheckAccess:
 
 
 def check_access_factory(
-    session: User = Depends(get_user_session),
-    resource: str = "",
-    roles: List[str] = []
+    session: User = Depends(get_user_session), resource: str = "", roles: List[str] = []
 ) -> CheckAccess:
     raise NameError(str(session))
     return CheckAccess(session, resource, roles)
