@@ -147,6 +147,16 @@ class MyBookmarksParams(CommonParams):
     )
 
 
+class BookmarkBase(BaseModel):
+    user_id: int
+    title: str
+    description: str
+    image_path: Optional[str] = None
+    snapshot_id: Optional[int] = None
+    to_read: bool = False
+    favorite: bool = False
+
+
 class Bookmark(BaseModel):
     id: int
     user_id: int

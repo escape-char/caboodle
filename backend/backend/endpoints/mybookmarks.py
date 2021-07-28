@@ -101,6 +101,40 @@ def get_my_bookmarks(
             detail=result.message
         )
 
-    return result
+    return result.data
+
+
+@router.get(
+    '/{bookmark_id}',
+    description=(
+        "Gets user's bookmark by id. "
+        "Requires at least 'my.bookmarks.view' role"
+    ),
+    dependencies=[Depends(check_view_access)],
+    response_model=Bookmark
+)
+def get_my_bookmark(
+    bookmark_id: int,
+    token_data: AccessTokenData = Depends(dependencies.get_token_data),
+    db: Session = Depends(dependencies.get_db)
+):
+    result: DatabaseResult = mybookmarks.get_my_bookmark(
+        db,
+        bookmark_id,
+        token_data.user_id
+    )
+
+    # handle database error
+    if not result.success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=result.message
+        )
+    if not result.data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND
+        )
+
+    return result.data
 
 
